@@ -1,0 +1,84 @@
+/* FULLSCREEN OVERLAY */
+.feedback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* POPUP CARD */
+.feedback-modal {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 14px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  animation: pop 0.2s ease-out;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.feedback-modal h3 {
+  margin-bottom: 6px;
+}
+
+.feedback-modal p {
+  font-size: 14px;
+  color: #555;
+}
+
+/* LABEL BUTTONS */
+.feedback-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.feedback-buttons button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feedback-buttons button:nth-child(1) {
+  background: #22c55e;
+  color: white;
+}
+
+.feedback-buttons button:nth-child(2) {
+  background: #f59e0b;
+  color: white;
+}
+
+.feedback-buttons button:nth-child(3) {
+  background: #ef4444;
+  color: white;
+}
+
+/* CLOSE */
+.feedback-close {
+  margin-top: 16px;
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+}

@@ -1,0 +1,13 @@
+body[data-theme="light"] {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+body[data-theme="dark"] {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -1,0 +1,56 @@
+# ===============================
+# Python / Backend
+# ===============================
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# ===============================
+# Machine Learning Artifacts
+# ===============================
+# Trained model weights (force training on first run)
+backend/models/**/*.h5
+backend/models/**/*.pt
+backend/models/**/*.bin
+
+# ===============================
+# Data & Databases
+# ===============================
+backend/data/clean_data.csv
+backend/data/app.db
+
+# ===============================
+# Reports / Training Outputs
+# ===============================
+backend/reports/
+
+# ===============================
+# Frontend / React
+# ===============================
+frontend/node_modules/
+frontend/build/
+frontend/.cache/
+
+# React lock files (fresh CRA every install)
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# ===============================
+# Environment / Secrets
+# ===============================
+.env
+.env.*
+*.key
+*.secret
+
+# ===============================
+# IDE / OS / Tooling
+# ===============================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
