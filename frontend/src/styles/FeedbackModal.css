@@ -1,0 +1,222 @@
+/* FULLSCREEN OVERLAY */
+.feedback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* POPUP CARD */
+.feedback-modal {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 24px;
+  border-radius: 14px;
+  width: 420px;
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  animation: pop 0.2s ease-out;
+}
+
+
+@keyframes pop {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.feedback-modal h3 {
+  margin-bottom: 6px;
+}
+
+.feedback-modal p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* LABEL BUTTONS */
+.feedback-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.feedback-buttons button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.feedback-buttons button:nth-child(1) {
+  background: #22c55e;
+  color: white;
+}
+
+.feedback-buttons button:nth-child(2) {
+  background: #f59e0b;
+  color: white;
+}
+
+.feedback-buttons button:nth-child(3) {
+  background: #ef4444;
+  color: white;
+}
+
+/* CLOSE */
+.feedback-close {
+  margin-top: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+
+  transition: color 0.2s ease;
+}
+
+.feedback-close:hover {
+  color: var(--text-primary);
+}
+
+
+
+/* =========================
+   IMPROVE MODE CARD
+========================= */
+
+.improve-card {
+  width: 100%;
+}
+
+/* Title */
+.improve-title {
+  font-weight: 800;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 14px;
+  color: var(--text-primary);
+}
+
+/* Scrollable tag area */
+.improve-tags {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 6px 2px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Individual tag */
+.improve-tag {
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Hover */
+.improve-tag:hover {
+  transform: scale(1.08);
+  background: rgba(0, 180, 216, 0.2);
+  color: var(--text-primary);
+}
+
+/* Selected state */
+.improve-tag.selected {
+  background: var(--turquoise-surf);
+  color: white;
+}
+
+
+.improve-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+
+.improve-submit {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+
+  color: #ffffff;
+
+  background: var(--bright-teal-blue);
+
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.improve-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+
+.improve-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+
+.improve-cancel {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.improve-cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}

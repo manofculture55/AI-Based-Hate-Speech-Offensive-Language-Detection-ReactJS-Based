@@ -1,0 +1,193 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 50px;
+
+  background-color: var(--bg-secondary);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  font-size: 26px;
+}
+
+.logo-text {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  color: var(--text-primary);
+
+  transition: background-position 1.5s ease;
+}
+
+.logo-text:hover {
+  background: linear-gradient(
+    90deg,
+    var(--bright-teal-blue),
+    var(--turquoise-surf),
+    var(--frosted-blue),
+    var(--turquoise-surf),
+    var(--bright-teal-blue)
+  );
+  background-size: 300%;
+  background-position: 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+
+/* From Uiverse.io by WhiteNervosa */
+.nav-btn {
+  font-size: 18px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  background: none;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  /* THE FIX */
+  color: var(--text-secondary);
+
+  transition: color 300ms ease;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  color: var(--text-primary);
+}
+
+.nav-btn::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    var(--bright-teal-blue),
+    var(--turquoise-surf),
+    var(--frosted-blue),
+    var(--turquoise-surf),
+    var(--bright-teal-blue)
+  );
+
+  transition:
+    width 250ms ease,
+    left 250ms ease;
+}
+
+.nav-btn:hover::after,
+.nav-btn.active::after {
+  width: 100%;
+  left: 0%;
+}
+
+
+
+/* switch wrapper */
+.theme-switch {
+  display: block;
+  --width-of-switch: 3.5em;
+  --height-of-switch: 2em;
+  --size-of-icon: 1.4em;
+  --slider-offset: 0.3em;
+  position: relative;
+  width: var(--width-of-switch);
+  height: var(--height-of-switch);
+}
+
+/* hide checkbox */
+.theme-switch-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* slider track */
+.theme-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--card-border);
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+/* slider knob */
+.theme-switch-slider::before {
+  position: absolute;
+  content: "";
+  height: var(--size-of-icon);
+  width: var(--size-of-icon);
+  border-radius: 20px;
+  left: var(--slider-offset);
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(40deg, #03045E, #00B4D8 70%);
+  transition: 0.4s;
+}
+
+/* dark mode */
+.theme-switch-input:checked + .theme-switch-slider {
+  background-color: #303136;
+}
+
+/* moon effect */
+.theme-switch-input:checked + .theme-switch-slider::before {
+  left: calc(
+    100% - (var(--size-of-icon) + var(--slider-offset))
+  );
+  background: #303136;
+  box-shadow:
+    inset -3px -2px 5px -2px #0077B6,
+    inset -10px -4px 0 0 #CAF0F8;
+}
+
+
+/* =========================
+   NAVBAR – ADMIN LOGOUT
+   ========================= */
+
+.nav-admin-logout {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.288);
+  background: transparent;
+  color: var(--text-secondary);
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.nav-admin-logout:hover {
+  background: #d30000;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+

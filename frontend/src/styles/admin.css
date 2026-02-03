@@ -1,0 +1,550 @@
+/* =========================
+   ADMIN LOGIN (MODERN)
+   ========================= */
+
+.admin-login-wrapper {
+  min-height: calc(100vh - 350px); /* navbar safe */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-login {
+  max-width: 420px;
+  margin: 90px auto;
+  padding: 36px 34px;
+
+  background: var(--bg-secondary);
+  border-radius: 18px;
+  text-align: center;
+
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* subtle lift */
+.admin-login:hover {
+  transform: translateY(-4px);
+}
+
+/* heading */
+.admin-login h1 {
+  margin-bottom: 22px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* input */
+.admin-login input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+
+  font-size: 15px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.admin-login input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* focus state */
+.admin-login input:focus {
+  outline: none;
+  border-color: var(--turquoise-surf);
+  box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.25);
+}
+
+/* login button */
+.admin-login button {
+  margin-top: 22px;
+  padding: 12px 26px;
+
+  border-radius: 999px;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+
+  color: #ffffff;
+  background: var(--bright-teal-blue);
+  background-size: 200%;
+
+  transition:
+    background-position 0.4s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* hover */
+.admin-login button:hover {
+  background-position: right;
+  transform: translateY(-2px);
+  background: var(--turquoise-surf);
+}
+
+/* active */
+.admin-login button:active {
+  transform: scale(0.97);
+}
+
+
+
+/* =========================
+   ADMIN PANEL
+   ========================= */
+
+.admin-panel {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 4px 30px 30px;
+  position: relative;
+}
+
+
+.admin-status {
+  margin-top: 30px;
+  background: #0f172a;
+  color: #e5e7eb;
+  padding: 15px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+
+
+
+
+/* =========================
+   ADMIN – HERO HEADER
+   ========================= */
+
+.admin-hero {
+  text-align: center;
+  margin-bottom: 36px;  
+  padding-top: 0;        
+}
+
+
+/* Small badge */
+.admin-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+
+  padding: 6px 14px;
+  border-radius: 999px;
+
+  color: var(--text-primary);
+  background: linear-gradient(
+    90deg,
+    var(--deep-twilight),
+    var(--bright-teal-blue),
+    var(--turquoise-surf),
+    var(--frosted-blue)
+  );
+
+  margin-bottom: 12px;
+}
+
+.admin-title {
+  font-size: 52px;
+  font-weight: 800;
+  margin: 6px 0 4px;     
+
+  background: var(--text-primary);
+  background-size: 300%;
+  background-position: left;
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  transition: background-position 1.5s ease;
+}
+
+/* Subtitle */
+.admin-subtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.75;
+  max-width: 520px;
+  margin: 4px auto 0;
+}
+
+
+/* =========================
+   ADMIN – ACTION CARDS
+   ========================= */
+
+.admin-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+/* Card base */
+.admin-card {
+  background: var(--bg-secondary);
+  border-radius: 18px;
+  padding: 28px 26px;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+}
+
+/* Hover lift */
+.admin-card:hover {
+  transform: translateY(-10px) scale(1.03);
+}
+
+/* Icon */
+.admin-card-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+/* Title */
+.admin-card-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+/* Description */
+.admin-card-desc {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-bottom: 20px;
+  max-width: 240px;
+}
+
+/* Button */
+.admin-card-btn {
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+
+  color: #ffffff;
+  border: none;
+
+  background: var(--bright-teal-blue);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Button hover */
+.admin-card-btn:hover {
+  transform: scale(1.05);
+  background: var(--turquoise-surf);
+}
+
+/* Danger variant */
+.admin-card-danger .admin-card-btn,
+.admin-card-btn.danger {
+  background: #108805;
+}
+
+
+/* =========================
+   NEW TREND CARD UI (Uiverse-based)
+========================= */
+
+.trend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+}
+
+.trend-card-ui {
+  background: var(--bg-secondary);
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.trend-card-ui:hover {
+  transform: translateY(-6px);
+}
+
+/* Header */
+.trend-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+.trend-card-ui.offensive .trend-dot {
+  background: #f59e0b;
+}
+
+.trend-card-ui.hate .trend-dot {
+  background: #ef4444;
+}
+
+.trend-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.trend-percent {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.trend-percent.up {
+  color: #22c55e;
+}
+
+.trend-percent.down {
+  color: #ef4444;
+}
+
+/* Body */
+.trend-card-body {
+  margin-top: 18px;
+}
+
+.trend-main-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.trend-main-sub {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.65;
+  margin-top: -4px;
+}
+
+.trend-subtitle {
+  font-size: 14px;
+  opacity: 0.75;
+  margin: 6px 0 14px;
+}
+
+/* Alert */
+.trend-alert {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+
+/* =========================
+   FLAGGED WORDS ANALYTICS
+========================= */
+
+.admin-flagged-terms {
+  margin-top: 40px;
+}
+
+.flagged-table-wrapper {
+  margin-top: 12px;
+
+  max-height: 320px;          /* 👈 controls vertical growth */
+  overflow-y: auto;           /* 👈 vertical scrollbar */
+  overflow-x: hidden;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.flagged-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flagged-table th,
+.flagged-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.flagged-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary);
+}
+
+.flagged-table th {
+  font-size: 13px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.flagged-table td {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.flagged-word {
+  color: #ff0000;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.flagged-table-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.flagged-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 4px;
+}
+
+.flagged-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+
+/* =========================
+   SURVEY LABEL DISTRIBUTION
+========================= */
+
+.admin-survey-insights {
+  margin-top: 50px;
+}
+
+/* Container */
+.survey-distribution-bar {
+  margin-top: 16px;
+}
+
+/* Track */
+.survey-bar-track {
+  display: flex;
+  width: 100%;
+  height: 18px;
+  border-radius: 999px;
+  overflow: hidden;
+
+  background: rgba(148, 163, 184, 0.15); /* neutral base */
+}
+
+/* Individual bars */
+.survey-bar {
+  height: 100%;
+  transition: width 0.6s ease;
+}
+
+/* Color mapping */
+.survey-bar.normal {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.survey-bar.offensive {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.survey-bar.hate {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+/* Legend */
+.survey-bar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.survey-bar-legend span b {
+  color: var(--text-primary);
+  margin-left: 4px;
+}
+
+.survey-total {
+  margin-left: auto;
+  font-weight: 800;
+}
+
+/* =========================
+   SURVEY PARTICIPATION OVERVIEW
+========================= */
+
+.admin-survey-overview-card {
+  margin-top: 50px;
+  padding: 26px 28px;
+  border-radius: 22px;
+
+  background: var(--bg-secondary);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.survey-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+  margin-top: 18px;
+}
+
+.survey-overview-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.survey-overview-grid span {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.survey-overview-grid b {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-primary);
+}

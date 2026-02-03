@@ -1,0 +1,310 @@
+/* =========================
+   CARD BASE
+   ========================= */
+
+.card {
+  width: 220px;
+  height: 170px;
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  cursor: pointer;
+  margin: 0;
+  transition:
+    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 0.4s ease,
+    color 0.3s ease;
+}
+
+
+/* =========================
+   HOVER TRANSFORM
+   ========================= */
+
+.card:hover {
+  transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+}
+
+/* =========================
+   LIGHT MODE HOVER
+   ========================= */
+
+[data-theme="light"] .card:hover {
+  background-color: var(--deep-twilight);
+}
+
+[data-theme="light"] .card:hover .card-value,
+[data-theme="light"] .card:hover .card-title,
+[data-theme="light"] .card:hover .card-para {
+  color: #ffffff;
+}
+
+/* =========================
+   DARK MODE HOVER
+   ========================= */
+
+[data-theme="dark"] .card:hover {
+  background-color: var(--turquoise-surf);
+}
+
+[data-theme="dark"] .card:hover .card-value,
+[data-theme="dark"] .card:hover .card-title,
+[data-theme="dark"] .card:hover .card-para {
+  color: #ffffff;
+}
+
+/* =========================
+   OVERLAY EFFECT
+   ========================= */
+
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  background: var(--bg-secondary);
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card::before {
+  left: 0;
+}
+
+.card::after {
+  right: 0;
+}
+
+.card:hover::before {
+  transform: translateX(-100%);
+}
+
+.card:hover::after {
+  transform: translateX(100%);
+}
+
+
+
+
+/* =========================
+   INSIGHT ITEM
+========================= */
+
+.insight-item {
+  background: var(--bg-secondary);
+  padding: 14px 16px;
+  border-radius: 12px;
+  text-align: center;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.insight-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.insight-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.insight-value.success {
+  color: #22c55e;
+}
+
+
+
+
+
+/* =========================
+   HISTORY TEXT TRUNCATION
+   ========================= */
+
+.truncate {
+  max-width: 380px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help; /* indicates tooltip */
+}
+
+
+/* =========================
+   PIE CHART CARD
+========================= */
+
+.chart-card {
+  width: 340px;
+  margin: 40px auto;
+
+  padding: 20px 16px;
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #e5e7eb);
+  box-shadow: none;
+
+  transition:
+    background 0.2s ease,
+    border 0.2s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Light mode */
+[data-theme="light"] .chart-card {
+  background-color: #f8fcff;
+}
+
+/* Dark mode */
+[data-theme="dark"] .chart-card {
+  background-color: #0f0f0f;
+  border-color: #1e293b;
+}
+
+/* Hover polish */
+.chart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: none;
+}
+
+/* Title */
+.chart-title {
+  font-size: 1em;
+  font-weight: 800;
+  margin-bottom: 2px;
+  color: var(--text-primary);
+}
+
+/* Subtitle */
+.chart-subtitle {
+  font-size: 0.75em;
+  font-weight: 600;
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+
+/* =========================
+   HOME – COMPACT VARIANT
+   (IMPORTANT FIX)
+========================= */
+
+.chart-card.compact {
+  width: 400px;     /* ⬅️ remove forced width */
+  margin: 0;       /* ⬅️ remove auto margins (KEY FIX) */
+  padding: 18px 12px;
+  box-shadow: none;
+}
+
+
+/* =========================
+   HISTORY RESULT BADGES
+   ========================= */
+
+.history-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Normal */
+.badge-normal {
+  background: #22c55e;
+  color: #ffffff;
+}
+
+/* Offensive */
+.badge-offensive {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* Hate */
+.badge-hate {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+
+
+/* =========================
+   IMPROVE MODE MODAL
+========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: var(--bg-secondary);
+  padding: 20px 24px;
+  border-radius: 14px;
+  width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.word-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.word-chip {
+  background: rgba(255,255,255,0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.word-chip input {
+  accent-color: #ef4444;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.improve-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  background: #6366f1;
+  color: white;
+}

@@ -1,0 +1,234 @@
+/* =========================
+   THEME VARIABLES
+========================= */
+
+:root {
+  --survey-bg: #f9fafb;
+  --survey-card-bg: #ffffff;
+  --survey-border: #e5e7eb;
+  --survey-text-primary: #111827;
+  --survey-text-secondary: #6b7280;
+  --survey-muted-bg: #f3f4f6;
+
+  --survey-primary: #1e90ff;
+  --survey-primary-hover: #1873cc;
+  --survey-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+/* 🌙 Dark mode */
+body.dark,
+body[data-theme="dark"] {
+  --survey-bg: #000000;
+  --survey-card-bg: #0206176e;
+  --survey-border: #1e293b;
+  --survey-text-primary: #e5e7eb;
+  --survey-text-secondary: #94a3b8;
+  --survey-muted-bg: #020617;
+
+  --survey-primary: #3b82f6;
+  --survey-primary-hover: #2563eb;
+  --survey-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.survey-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--survey-bg);
+  padding: 2px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.survey-box {
+  width: 100%;
+  max-width: 640px;
+  background: var(--survey-card-bg);
+  border-radius: 22px;
+  padding: 48px 42px;
+  border: 1px solid var(--survey-border);
+  box-shadow: var(--survey-shadow);
+  animation: surveyFadeIn 0.35s ease-out;
+}
+
+@keyframes surveyFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   TEXT
+========================= */
+
+.survey-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--survey-text-primary);
+}
+
+.survey-desc {
+  font-size: 0.95rem;
+  color: var(--survey-text-secondary);
+  margin-bottom: 24px;
+}
+
+/* =========================
+   SURVEY TEXT
+========================= */
+
+.survey-text-box {
+  background: var(--survey-muted-bg);
+  border: 1px solid var(--survey-border);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--survey-text-primary);
+  margin-bottom: 22px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+
+
+/* =========================
+   OPTIONS
+========================= */
+
+.survey-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+/* Hide radio */
+.survey-options input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* Base option card */
+.survey-options label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 10px;
+  border-radius: 16px;
+  border: 1.5px solid var(--survey-border);
+  background: var(--survey-card-bg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--survey-text-primary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* -------------------------
+   HOVER COLORS (THIS IS IT)
+------------------------- */
+
+/* 🟢 Normal */
+.survey-options .option-normal:hover {
+  background: #22c55e;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.9);
+}
+
+/* 🟡 Offensive */
+.survey-options .option-offensive:hover {
+  background: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.9);
+}
+
+/* 🔴 Hate */
+.survey-options .option-hate:hover {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.9);
+}
+
+/* -------------------------
+   SELECTED STATE
+------------------------- */
+
+/* -------------------------
+   SELECTED STATE (SEMANTIC)
+------------------------- */
+
+/* 🟢 Normal */
+.survey-options .option-normal:has(input:checked) {
+  background: #22c55e;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(34, 197, 94, 0.9);
+}
+
+/* 🟡 Offensive */
+.survey-options .option-offensive:has(input:checked) {
+  background: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.9);
+}
+
+/* 🔴 Hate */
+.survey-options .option-hate:has(input:checked) {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.9);
+}
+
+/* =========================
+   BUTTONS (THEME AWARE)
+========================= */
+
+.survey-submit-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: none;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+
+  background: var(--survey-primary);
+  color: #ffffff;
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.survey-submit-btn:hover {
+  background: var(--survey-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.survey-message,
+.survey-status {
+  margin-top: 18px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--survey-text-secondary);
+}

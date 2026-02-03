@@ -1,0 +1,196 @@
+/* =========================
+   ANALYTICS PAGE LAYOUT
+========================= */
+
+.analytics-page {
+  padding: 40px;
+}
+
+.analytics-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+
+  margin-bottom: 30px;
+  margin-left: 50px;   /* 👈 slight left shift */
+
+  color: var(--text-primary);
+}
+
+
+.analytics-state {
+  padding: 40px;
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.analytics-state.error {
+  color: #ef4444;
+}
+
+.analytics-empty {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* =========================
+   KPI CARDS
+========================= */
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+}
+
+.card {
+  background: var(--bg-secondary);
+  border-radius: 14px;
+
+  padding: 20px 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+  display: flex;                /* 👈 NEW */
+  flex-direction: column;
+  align-items: center;          /* horizontal centering */
+  text-align: center;
+}
+
+.card-value {
+  font-size: 45px;
+  font-weight: 900;
+  color: var(--text-primary);
+
+  line-height: 1;
+  margin-top: 15px;          /* 👈 much smaller */
+}
+
+.card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.card-para {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+  opacity: 0.6;
+}
+
+
+/* =========================
+   CHART GRID
+========================= */
+
+.analytics-chart-row {
+  display: flex;
+  gap: 30px;
+  margin: 30px auto;
+  max-width: 1200px;
+  align-items: stretch;
+}
+
+.chart-card {
+  flex: 1;
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+}
+
+.trend-card {
+  flex: 1.5;
+}
+
+.chart-title {
+  font-size: 25px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.chart-subtitle {
+  font-size: 14px;
+  margin-bottom: 14px;
+  color: var(--text-secondary);
+}
+
+/* =========================
+   MODEL COMPARISON
+========================= */
+.model-compare-card {
+  width: 100%;
+
+  /* fluid width: min → ideal → max */
+  max-width: clamp(900px, 90vw, 1150px);
+
+  margin: 40px auto;
+}
+
+
+
+
+
+/* =========================
+   TABLES
+========================= */
+
+.confusion-table,
+.error-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.confusion-table th,
+.confusion-table td,
+.error-table th,
+.error-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.confusion-table th,
+.error-table th {
+  font-weight: 700;
+}
+
+.error-table-wrapper {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+/* =========================
+   ERROR SECTION
+========================= */
+
+.error-half {
+  flex: 1;
+  min-width: 0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1024px) {
+  .analytics-chart-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .analytics-page {
+    padding: 20px;
+  }
+
+  .analytics-title {
+    font-size: 1.5rem;
+  }
+}

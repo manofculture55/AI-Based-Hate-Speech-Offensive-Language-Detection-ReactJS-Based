@@ -1,0 +1,183 @@
+
+/* =========================
+   HISTORY PAGE
+   ========================= */
+
+.history-card {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 24px 28px;
+  border-radius: 16px;
+}
+
+/* Light mode */
+[data-theme="light"] .history-card {
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode */
+[data-theme="dark"] .history-card {
+  background: #0f0f0f;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.history-title {
+  font-size: 1.6em;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+/* Table wrapper for overflow */
+.history-table-wrapper {
+  overflow-x: auto;
+}
+
+/* Table base */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Header */
+.history-table thead th {
+  text-align: left;
+  padding: 12px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.7;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Body cells */
+.history-table tbody td {
+  padding: 12px 10px;
+  vertical-align: top;
+}
+
+/* Zebra rows */
+.history-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .history-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Hover highlight */
+.history-table tbody tr:hover {
+  background: rgba(34, 197, 94, 0.08);
+}
+
+/* Text column */
+.history-text {
+  max-width: 380px;
+  word-break: break-word;
+}
+
+/* States */
+.history-loading,
+.history-empty {
+  opacity: 0.7;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+
+
+
+
+/* =========================
+   HISTORY PAGINATION
+========================= */
+
+.history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* Base button */
+.history-pagination button {
+  padding: 6px 14px;
+  border-radius: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  border: 1px solid transparent;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+/* Hover */
+.history-pagination button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* Disabled */
+.history-pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   LIGHT MODE
+========================= */
+
+[data-theme="light"] .history-pagination button {
+  background: #ffffff;
+  color: #000000;
+  border-color: #e5e7eb;
+}
+
+[data-theme="light"] .history-pagination button:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+
+[data-theme="dark"] .history-pagination button {
+  background: #0f1115;
+  color: #ffffff;
+  border-color: #1f2430;
+}
+
+[data-theme="dark"] .history-pagination button:hover:not(:disabled) {
+  background: #1a1f2b;
+}
+
+
+
+.history-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.history-export-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: var(--bright-teal-blue);
+  color: white;
+}
+
+.history-export-btn:hover {
+  background: var(--turquoise-surf);
+}
+

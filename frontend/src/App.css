@@ -1,0 +1,105 @@
+/* =========================
+   1. DEFAULT (DARK THEME)
+   ========================= */
+
+:root {
+  /* absolute backgrounds */
+  --bg-primary: #000000;        /* AMOLED black */
+  --bg-secondary: #0e0e0e;      /* cards / navbar */
+
+  /* palette (accents only) */
+  --deep-twilight: #03045e;
+  --bright-teal-blue: #0077b6;
+  --turquoise-surf: #00b4d8;
+  --frosted-blue: #90e0ef;
+  --light-cyan: #caf0f8;
+
+  /* semantic accents */
+  --accent-primary: var(--turquoise-surf);
+  --accent-secondary: var(--bright-teal-blue);
+
+  /* text */
+  --text-primary: #ffffff;
+  --text-secondary: #cfefff;
+
+  --card-border: rgba(255, 255, 255, 0.06);
+
+  --tooltip-bg: #0e0e0e;
+  --tooltip-text: #e5e7eb;
+  --tooltip-border: rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================
+   2. LIGHT THEME OVERRIDES
+   ========================= */
+
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+
+  --text-primary: #03045e;
+  --text-secondary: #023e8a;
+
+  --tooltip-bg: #ffffff;
+  --tooltip-text: #111827;
+  --tooltip-border: rgba(0, 0, 0, 0.08);
+}
+
+html,
+body {
+  background-color: var(--bg-primary);
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+
+
+/* =========================
+   RECHARTS TOOLTIP (THEME SAFE)
+   ========================= */
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  background-color: var(--tooltip-bg) !important;
+  border: 1px solid var(--tooltip-border) !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+}
+
+.recharts-default-tooltip p,
+.recharts-default-tooltip span,
+.recharts-default-tooltip li {
+  color: var(--tooltip-text) !important;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.recharts-tooltip-label {
+  color: var(--tooltip-text) !important;
+  font-weight: 700;
+}
+
+
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+body, p, span, li, input, textarea, button {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  color: var(--text-secondary);
+}
+
