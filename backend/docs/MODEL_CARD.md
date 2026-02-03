@@ -1,7 +1,7 @@
 # Model Card: AI-Based Hate Speech & Offensive Language Detection
 
 **Project:** KRIXION Internship Challenge  
-**Developer:** [Your Name]  
+**Developer:** Prathmesh Ahire  
 **Year:** 2025–2026  
 **Model Version:** 1.0 (Final Submission)  
 
