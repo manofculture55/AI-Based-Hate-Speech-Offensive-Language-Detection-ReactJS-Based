@@ -21,11 +21,22 @@ FINAL_CSV = os.path.join(DATA_DIR, "clean_data.csv")
 
 
 def save_to_db(df):
-    """Saves processed data to SQLite 'annotations' table [Section 4]."""
+    """
+    Saves the normalized corpus to the 'dataset_samples' table [Section 4].
+
+    This used to target 'annotations' with if_exists='replace', which dropped
+    that table's schema and overwrote every human correction with corpus rows
+    on each run.  'annotations' is now reserved for user feedback only.
+    """
     conn = sqlite3.connect(DB_PATH)
-    df.to_sql('annotations', conn, if_exists='replace', index=False) 
-    conn.close()
-    print("✅ Data saved to SQLite 'annotations' table.")
+    try:
+        df[['text', 'truelabel', 'lang']].to_sql(
+            'dataset_samples', conn, if_exists='replace', index=False
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    print(f"{len(df)} rows saved to SQLite 'dataset_samples' table.")
 
 # --- DATASET PROCESSORS ---
 
@@ -99,7 +110,7 @@ def process_indo_hate():
 # --- MAIN EXECUTION ---
 
 if __name__ == "__main__":
-    print("🚀 Starting Modular Data Normalization...")
+    print("Starting Modular Data Normalization...")
     dfs = []
     
     # Add datasets if they exist
@@ -109,7 +120,9 @@ if __name__ == "__main__":
     d2 = process_hasoc_hindi("hasoc2019_hi_test_gold_2919.tsv")
     if d2 is not None: dfs.append(d2)
     
-    d3 = process_hasoc_hindi("hindi_dataset.csv")
+    # The file on disk is a .tsv -- the old ".csv" name never matched, so this
+    # dataset was silently skipped on every run.
+    d3 = process_hasoc_hindi("hindi_dataset.tsv")
     if d3 is not None: dfs.append(d3)
     
     d4 = process_mdpi()
@@ -127,7 +140,7 @@ if __name__ == "__main__":
         save_to_db(final_df)
         
         print(final_df.columns)
-        print(f"\n✅ SUCCESS! Processed {len(final_df)} rows.")
+        print(f"\nProcessed {len(final_df)} rows.")
         print(final_df['lang'].value_counts())
     else:
-        print("❌ No data processed.")
+        print("No data processed.")

@@ -1,8 +1,8 @@
 """
-KRIXION Hate Speech Detection - Complete Training Pipeline
-Stage 1: Baseline ML (LR, NB, SVM) ✅ 75-80% accuracy
-Stage 2: Deep Learning (BiLSTM, CNN) ✅ 85-88% accuracy  
-Stage 3: Transformer (DistilBERT) 🔄 Inference-only
+Hate Speech Detection - Complete Training Pipeline
+Stage 1: Baseline ML (LR, NB, SVM) - 75-80% accuracy
+Stage 2: Deep Learning (BiLSTM, CNN) - 85-88% accuracy  
+Stage 3: Transformer (DistilBERT) - inference-only
 """
 
 import os
@@ -49,7 +49,7 @@ os.makedirs(DEEPDIR, exist_ok=True)
 
 def load_data():
     """Load cleaned data with 70/15/15 stratified split [file:1]"""
-    print("📊 Loading Data...")
+    print("[Data] Loading...")
     df = pd.read_csv(DATAPATH).dropna(subset=['text', 'truelabel'])
     texts = df['text'].astype(str).tolist()
     labels = df['truelabel'].astype(int).tolist()
@@ -119,7 +119,7 @@ def run_training():
     # ========================================================
     # STAGE 1: BASELINE MODELS (Day 2) - Classical ML [file:1]
     # ========================================================
-    print("\n🚀 STAGE 1: BASELINE MODELS (LR, NB, SVM)")
+    print("\n[Stage 1] Baseline models (LR, NB, SVM)")
     baseline_algos = ['lr', 'nb', 'svm']
     
     for algo in baseline_algos:
@@ -134,14 +134,14 @@ def run_training():
         # Evaluate on Test Set
         preds = model.predict(X_test_txt)
         save_metrics(y_test, preds, algo, results)
-        print(f"   ✅ {algo.upper()} SAVED: {model_path}")
+        print(f"   {algo.upper()} saved: {model_path}")
 
     # ========================================================
     # STAGE 2: DEEP LEARNING MODELS (Day 3) - BiLSTM & CNN [file:2]
     # ========================================================
-    print("\n🚀 STAGE 2: DEEP LEARNING (BiLSTM + CNN)")
+    print("\n[Stage 2] Deep learning (BiLSTM + CNN)")
     
-    # 🔥 SHARED TOKENIZER + PREPROCESSING (FIXED from your old commit)
+    # Shared tokenizer + preprocessing across all deep models
     helper = DeepModel(architecture='bilstm')
     helper.prepare_tokenizer(X_train_txt.tolist())
     
@@ -169,27 +169,27 @@ def run_training():
         raw_probs = model.model.predict(X_test_seq, verbose=0)
         preds = raw_probs.argmax(axis=1)
         save_metrics(y_test_np, preds, arch, results)
-        print(f"   ✅ {arch.upper()} SAVED: models/deep/{arch}_model.h5")
+        print(f"   {arch.upper()} saved: models/deep/{arch}_model.h5")
 
     # ========================================================
     # STAGE 3: TRANSFORMER (DistilBERT) - EXACTLY like your recent code
     # ========================================================
-    print("\n🚀 STAGE 3: TRANSFORMER (DistilBERT)")
+    print("\n[Stage 3] Transformer (DistilBERT)")
     print("  [Note] First run will download model (~260MB). Please wait...")
 
-    # 🔥 Initialize and Train - YOUR WORKING PATTERN
+    # Initialize and train
     transformer = TransformerModel()
     transformer.train(X_train_txt, y_train)  # Uses raw text (not sequences)
     transformer.save()
 
-    # Evaluate - YOUR WORKING PATTERN  
+    # Evaluate  
     print("  [Evaluate] DistilBERT...")
     preds = transformer.predict(X_test_txt)  # Uses raw text (not sequences)
     save_metrics(y_test, preds, "distilbert", results)
-    print(f"  ✅ DISTILBERT SAVED: models/transformer/transformer_head.pkl")
+    print("   DISTILBERT saved: models/transformer/transformer_head.pkl")
 
     # ========================================================
-    # FINAL REPORT - KRIXION STANDARD
+    # FINAL REPORT
     # ========================================================
     report_path = os.path.join(REPORTDIR, "training_report_all.json")
     with open(report_path, "w") as f:
@@ -197,28 +197,28 @@ def run_training():
 
     # Print Summary Table
     print("\n" + "="*60)
-    print("✨ TRAINING COMPLETE - KRIXION HATE SPEECH DETECTION")
+    print("TRAINING COMPLETE")
     print("="*60)
-    print(f"📁 Reports: {REPORTDIR}/")
-    print(f"📁 Baseline Models: {BASELINEDIR}/") 
-    print(f"📁 Deep Models: {DEEPDIR}/")
-    print(f"📁 Transformer: models/transformer/")
-    print(f"📊 Full Report: {report_path}")
+    print(f"   Reports:         {REPORTDIR}")
+    print(f"   Baseline models: {BASELINEDIR}") 
+    print(f"   Deep models:     {DEEPDIR}")
+    print(f"   Transformer:     {TRANSFORMERDIR}")
+    print(f"   Full report:     {report_path}")
 
     # Model Performance Summary
-    print("\n🏆 PERFORMANCE SUMMARY:")
+    print("\nPERFORMANCE SUMMARY:")
     for model_name, metrics in results.items():
         acc = metrics['accuracy']
-        status = "🎖️ CHAMPION" if acc > 0.85 else "✅ PASSED"
+        status = "BEST" if acc > 0.85 else "PASSED"
         print(f"   {model_name.upper()}: {acc:.1%} {status}")
 
-    print("\n🎉 ALL STAGES COMPLETE! Run: python app.py")
+    print("\nAll stages complete. Start the API with: python -m backend.app")
 
 if __name__ == "__main__":
-    print("🚀 KRIXION TRAINING PIPELINE STARTING...")
-    print(f"📁 Data: {DATAPATH}")
+    print("TRAINING PIPELINE STARTING...")
+    print(f"Data: {DATAPATH}")
     if not os.path.exists(DATAPATH):
-        print("❌ ERROR: data/clean_data.csv NOT FOUND!")
-        print("💡 Run: python -m backend.src.data.normalize first")
+        print("ERROR: backend/data/clean_data.csv not found.")
+        print("Run: python -m backend.src.data.normalize first")
         exit(1)
     run_training()

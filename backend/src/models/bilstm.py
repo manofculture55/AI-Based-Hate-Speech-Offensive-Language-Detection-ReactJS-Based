@@ -7,11 +7,15 @@ import pickle
 import os
 import numpy as np
 
+from backend.src.utils.paths import DEEP_MODEL_DIR
+
 # CPU Optimization Constants [Source 24]
-VOCAB_SIZE = 15000 
-EMBEDDING_DIM = 100 
-MAX_LEN = 120       
-MODEL_DIR = "backend/models/deep"  # Source 49 mentions 'models/deep/' folder
+VOCAB_SIZE = 15000
+EMBEDDING_DIM = 100
+MAX_LEN = 120
+# Absolute; the old "backend/models/deep" literal only resolved when the
+# process happened to be started from the project root.
+MODEL_DIR = DEEP_MODEL_DIR
 
 class DeepModel:
     def __init__(self, architecture='bilstm'):

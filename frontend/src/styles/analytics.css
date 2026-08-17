@@ -11,7 +11,7 @@
   font-weight: 800;
 
   margin-bottom: 30px;
-  margin-left: 50px;   /* 👈 slight left shift */
+  margin-left: 50px;   /* slight left shift */
 
   color: var(--text-primary);
 }
@@ -52,7 +52,7 @@
   padding: 20px 22px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 
-  display: flex;                /* 👈 NEW */
+  display: flex;                
   flex-direction: column;
   align-items: center;          /* horizontal centering */
   text-align: center;
@@ -64,7 +64,7 @@
   color: var(--text-primary);
 
   line-height: 1;
-  margin-top: 15px;          /* 👈 much smaller */
+  margin-top: 15px;          /* tightened */
 }
 
 .card-title {
@@ -124,7 +124,7 @@
 .model-compare-card {
   width: 100%;
 
-  /* fluid width: min → ideal → max */
+  /* fluid width: min -> ideal -> max */
   max-width: clamp(900px, 90vw, 1150px);
 
   margin: 40px auto;
@@ -193,4 +193,27 @@
   .analytics-title {
     font-size: 1.5rem;
   }
+}
+
+/* Shown when no training report exists, instead of placeholder metrics */
+.analytics-notice {
+  margin: 6px 0 22px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.08);
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.analytics-notice code {
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.chart-empty {
+  padding: 40px 20px;
+  text-align: center;
+  opacity: 0.6;
+  font-size: 14px;
 }

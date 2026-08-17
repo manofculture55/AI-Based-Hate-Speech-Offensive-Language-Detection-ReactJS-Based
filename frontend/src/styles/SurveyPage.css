@@ -15,7 +15,7 @@
   --survey-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
 }
 
-/* 🌙 Dark mode */
+/* Dark mode */
 body.dark,
 body[data-theme="dark"] {
   --survey-bg: #000000;
@@ -144,21 +144,21 @@ body[data-theme="dark"] {
    HOVER COLORS (THIS IS IT)
 ------------------------- */
 
-/* 🟢 Normal */
+/* Normal */
 .survey-options .option-normal:hover {
   background: #22c55e;
   color: #ffffff;
   box-shadow: 0 0 22px rgba(34, 197, 94, 0.9);
 }
 
-/* 🟡 Offensive */
+/* Offensive */
 .survey-options .option-offensive:hover {
   background: #f59e0b;
   color: #ffffff;
   box-shadow: 0 0 22px rgba(245, 158, 11, 0.9);
 }
 
-/* 🔴 Hate */
+/* Hate */
 .survey-options .option-hate:hover {
   background: #ef4444;
   color: #ffffff;
@@ -173,21 +173,21 @@ body[data-theme="dark"] {
    SELECTED STATE (SEMANTIC)
 ------------------------- */
 
-/* 🟢 Normal */
+/* Normal */
 .survey-options .option-normal:has(input:checked) {
   background: #22c55e;
   color: #ffffff;
   box-shadow: 0 0 22px rgba(34, 197, 94, 0.9);
 }
 
-/* 🟡 Offensive */
+/* Offensive */
 .survey-options .option-offensive:has(input:checked) {
   background: #f59e0b;
   color: #ffffff;
   box-shadow: 0 0 22px rgba(245, 158, 11, 0.9);
 }
 
-/* 🔴 Hate */
+/* Hate */
 .survey-options .option-hate:has(input:checked) {
   background: #ef4444;
   color: #ffffff;

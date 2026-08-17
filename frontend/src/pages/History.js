@@ -1,23 +1,38 @@
 import { useEffect, useState } from "react";
+import * as api from "../api/client";
 
 export default function History() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
 
-    fetch(`http://127.0.0.1:5000/history?page=${page}&limit=20`)
-      .then(res => res.json())
+    setLoading(true);
+    setError(null);
+
+    api.predictions
+      .list({ page, perPage: 20 })
       .then(data => {
+        if (cancelled) return;
         setRows(data.data);
-        setTotalPages(data.pages);   // ⬅️ important
+        setTotalPages(data.pagination.pages);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(err => {
+        if (cancelled) return;
+        setError(err.message);
+        setLoading(false);
+      });
+
+    // Avoid a slow response for an old page overwriting a newer one.
+    return () => {
+      cancelled = true;
+    };
   }, [page]);
 
 
@@ -28,7 +43,9 @@ export default function History() {
 
       {loading && <p className="history-loading">Loading...</p>}
 
-      {!loading && rows.length === 0 && (
+      {error && <p className="history-empty">{error}</p>}
+
+      {!loading && !error && rows.length === 0 && (
         <p className="history-empty">No history found.</p>
       )}
 
@@ -36,10 +53,10 @@ export default function History() {
         <button
           className="history-export-btn"
           onClick={() => {
-            window.open("http://127.0.0.1:5000/history/export?format=csv");
+            window.open(api.predictions.exportUrl());
           }}
         >
-          ⬇ Export CSV
+          Export CSV
         </button>
       </div>
 
@@ -61,7 +78,7 @@ export default function History() {
                 <tr key={idx}>
                   <td
                     className="history-text truncate"
-                    title={row.text}   // ⬅️ native tooltip (full text)
+                    title={row.text}   // native tooltip (full text)
                   >
                     {row.text.length > 60
                       ? row.text.slice(0, 60) + "..."
@@ -70,18 +87,19 @@ export default function History() {
                   <td>
                     <span
                       className={`history-badge ${
-                        row.result === "Normal"
+                        row.label_name === "Normal"
                           ? "badge-normal"
-                          : row.result === "Offensive"
+                          : row.label_name === "Offensive"
                           ? "badge-offensive"
                           : "badge-hate"
                       }`}
                     >
-                      {row.result}
+                      {row.label_name}
                     </span>
                   </td>
-                  <td>{row.score}</td>
-                  <td>{row.latency_ms}</td>
+                  {/* The API returns raw numbers now; formatting happens here. */}
+                  <td>{(row.confidence * 100).toFixed(1)}%</td>
+                  <td>{row.latency_ms} ms</td>
                   <td>{row.created_at}</td>
                 </tr>
               ))}

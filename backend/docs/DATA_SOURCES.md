@@ -1,7 +1,7 @@
 # Data Sources & Preprocessing Report
 
 ## 1. Dataset Sources
-This project integrates the following officially approved KRIXION datasets:
+This project integrates the following publicly available research datasets:
 
 | Dataset Name | Original Format | Role in Project | Description |
 | :--- | :--- | :--- | :--- |
@@ -20,7 +20,7 @@ Following the mandatory pipeline defined in **Section 4** of the project brief, 
     *   **Hindi (`hi`):** Text containing Devanagari script (e.g., "नमस्ते").
     *   **Hinglish (`hi-en`):** Latin script text originating from Code-Mixed sources (e.g., "Tum pagal ho").
     *   **English (`en`):** Latin script text originating from English-only sources.
-4.  **Label Mapping:** Standardized all source labels to the KRIXION schema:
+4.  **Label Mapping:** Standardized all source labels to the project's label schema:
     *   **0 (Normal):** Non-toxic content (mapped from `NOT`, `NONE`, `HS0`).
     *   **1 (Offensive):** Abusive/Profane but not hateful (mapped from `OFFN`, `PRFN`, `HS1`).
     *   **2 (Hate Speech):** Targeted attacks (mapped from `HATE`, `HSN`).

@@ -385,8 +385,8 @@
 .flagged-table-wrapper {
   margin-top: 12px;
 
-  max-height: 320px;          /* 👈 controls vertical growth */
-  overflow-y: auto;           /* 👈 vertical scrollbar */
+  max-height: 320px;          /* controls vertical growth */
+  overflow-y: auto;           /* vertical scrollbar */
   overflow-x: hidden;
 
   border-radius: 10px;
@@ -547,4 +547,11 @@
   font-size: 26px;
   font-weight: 900;
   color: var(--text-primary);
+}
+/* Login failure returned by POST /api/v1/admin/sessions */
+.admin-login-error {
+  margin-top: 12px;
+  color: #EF4444;
+  font-size: 14px;
+  text-align: center;
 }

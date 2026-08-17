@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { ThemeContext } from "./ThemeContext";
 import "../styles/navbar.css";
 import {  useEffect, useState } from "react";
+import * as api from "../api/client";
 
 
 export default function Navbar() {
@@ -35,9 +36,9 @@ export default function Navbar() {
 
 
 
-  function adminLogout() {
-    sessionStorage.removeItem("admin_auth");
-    window.dispatchEvent(new Event("admin-auth-change"));
+  async function adminLogout() {
+    // Clears the stored admin token too, not just the display flag.
+    await api.admin.logout();
     setIsAdminLoggedIn(false);
     navigate("/");
   }

@@ -14,6 +14,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import * as api from "../api/client";
 
 /* ==============================
    LOCAL KPI CARD COMPONENT
@@ -39,14 +40,19 @@ export default function Analytics() {
 
 
 
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/analytics")
-      .then(res => res.json())
+    api.analytics
+      .dashboard()
       .then(json => {
         setData(json);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
@@ -54,10 +60,26 @@ export default function Analytics() {
   }
 
   if (!data) {
-    return <div >Failed to load analytics.</div>;
+    return <div>Failed to load analytics. {error && `(${error})`}</div>;
   }
 
-  const bilstm = data.models?.BiLSTM || {};
+  /* ==============================
+     TRAINED MODEL METRICS
+
+     `models` is now {available, models: {...}} and reports availability
+     honestly. The page used to read data.models.BiLSTM.f1 / .latency, which
+     the backend filled with invented constants whenever it could not find the
+     training report — which was always, because it looked in the wrong
+     directory. Nothing is shown as a measurement unless it was measured.
+     ============================== */
+  const metricsAvailable = data.models?.available;
+  const trainedModels = data.models?.models || {};
+  const bilstm = trainedModels.bilstm || {};
+
+  const fmtPercent = (value) =>
+    typeof value === "number" ? `${Math.round(value * 100)}%` : "—";
+  const fmtScore = (value) =>
+    typeof value === "number" ? value.toFixed(2) : "—";
 
   /* ==============================
      CLASS DISTRIBUTION DATA
@@ -85,13 +107,13 @@ export default function Analytics() {
   /* ==============================
    MODEL COMPARISON DATA
    ============================== */
-  const modelComparisonData = Object.entries(data.models || {}).map(
-    ([name, m]) => ({
-      model: name,
-      accuracy: Math.round((m.accuracy || 0) * 100),
-      latency: m.latency || 0,
-    })
-  );
+  const modelComparisonData = Object.entries(trainedModels)
+    .filter(([, m]) => typeof m.accuracy === "number")
+    .map(([name, m]) => ({
+      model: name.toUpperCase(),
+      accuracy: Math.round(m.accuracy * 100),
+      macroF1: m.macro_f1 ? Math.round(m.macro_f1 * 100) : 0,
+    }));
 
   /* ==============================
    LANGUAGE DISTRIBUTION
@@ -151,22 +173,34 @@ export default function Analytics() {
 
         <KpiCard
           title="Accuracy"
-          value={`${Math.round((bilstm.accuracy || 0) * 100)}%`}
-          subtitle="BiLSTM"
+          value={fmtPercent(bilstm.accuracy)}
+          subtitle={metricsAvailable ? "BiLSTM (test set)" : "No training report"}
         />
 
         <KpiCard
           title="F1 Score"
-          value={(bilstm.f1 || 0).toFixed(2)}
-          subtitle="Macro Avg"
+          value={fmtScore(bilstm.macro_f1)}
+          subtitle={metricsAvailable ? "Macro Avg" : "No training report"}
         />
 
         <KpiCard
-          title="Latency"
-          value={`${bilstm.latency || "—"} ms`}
-          subtitle="P95 CPU"
+          title="Avg Latency"
+          value={
+            typeof data.avg_latency_ms === "number"
+              ? `${Math.round(data.avg_latency_ms)} ms`
+              : "—"
+          }
+          subtitle="Measured, all predictions"
         />
       </div>
+
+      {!metricsAvailable && (
+        <p className="analytics-notice">
+          Model accuracy and F1 are unavailable because no training report
+          exists yet. Run the training pipeline to generate
+          <code> backend/reports/training_report_all.json</code>.
+        </p>
+      )}
 
       {/* ================= CLASS + TREND ================= */}
       <div className="analytics-chart-row">
@@ -230,37 +264,37 @@ export default function Analytics() {
       <div className="chart-card model-compare-card">
         <p className="chart-title">Model Comparison</p>
         <p className="chart-subtitle">
-          Accuracy comparison across models
+          Test-set accuracy across trained models
         </p>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={modelComparisonData}
-            layout="vertical"
-            margin={{ left: 40 }}
-          >
-          <Bar dataKey="accuracy" barSize={25} />
-            <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-            <XAxis
-              type="number"
-              domain={[60, 100]}
-              unit="%"
-            />
-            <YAxis
-              type="category"
-              dataKey="model"
-              width={100}
-            />
-            <Tooltip />
+        {modelComparisonData.length === 0 ? (
+          <p className="chart-empty">
+            No trained model metrics yet. Run the training pipeline to populate
+            this chart.
+          </p>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={modelComparisonData}
+              layout="vertical"
+              margin={{ left: 40 }}
+            >
+              {/* There used to be a second, style-less <Bar> for the same key
+                  here, which rendered a stray duplicate series. */}
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis type="number" domain={[0, 100]} unit="%" />
+              <YAxis type="category" dataKey="model" width={100} />
+              <Tooltip />
 
-
-            <Bar
-              dataKey="accuracy"
-              fill="#00B4D8"
-              radius={[0, 6, 6, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+              <Bar
+                dataKey="accuracy"
+                fill="#00B4D8"
+                radius={[0, 6, 6, 0]}
+                barSize={25}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* ================= LANGUAGE INTELLIGENCE ================= */}
@@ -334,19 +368,23 @@ export default function Analytics() {
           <table className="confusion-table">
             <thead>
               <tr>
-                <th>Actual ↓ / Predicted →</th>
+                <th>Actual / Predicted</th>
                 <th>Normal</th>
                 <th>Offensive</th>
                 <th>Hate</th>
               </tr>
             </thead>
             <tbody>
+              {/* The API keys this {actual: {predicted: count}} with label
+                  names. It previously emitted the transposed orientation with
+                  numeric keys, so this table read cell [pred][actual] — every
+                  off-diagonal number was in the wrong cell. */}
               {[0, 1, 2].map((actual) => (
                 <tr key={actual}>
                   <td><b>{LABEL_MAP[actual]}</b></td>
                   {[0, 1, 2].map((pred) => (
                     <td key={pred}>
-                      {confusion[pred]?.[actual] || 0}
+                      {confusion[LABEL_MAP[actual]]?.[LABEL_MAP[pred]] || 0}
                     </td>
                   ))}
                 </tr>
@@ -363,7 +401,7 @@ export default function Analytics() {
           </p>
 
           {errorSamples.length === 0 ? (
-            <p>No misclassifications yet 🎉</p>
+            <p>No misclassifications yet.</p>
           ) : (
             <div className="error-table-wrapper">
               <table className="error-table">

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import FeedbackModal from "../components/FeedbackModal";
 import { useNavigate } from "react-router-dom";
+import * as api from "../api/client";
 
 export default function Home() {
     const [text, setText] = useState("");
@@ -13,10 +14,11 @@ export default function Home() {
         expanded: false,
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [analytics, setAnalytics] = useState(null);
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [showImproveModal, setShowImproveModal] = useState(false);
-    const [openStep, setOpenStep] = useState(null);   // ✅ FIXED
+    const [openStep, setOpenStep] = useState(null);
     const [history, setHistory] = useState([]);
     const [flaggedWords, setFlaggedWords] = useState([]);
     const navigate = useNavigate();
@@ -31,28 +33,33 @@ export default function Home() {
     const pieData = [
         {
             name: "Normal",
-            value: history.filter(h => h.result === "Normal").length,
+            value: history.filter(h => h.label_name === "Normal").length,
         },
         {
             name: "Offensive",
-            value: history.filter(h => h.result === "Offensive").length,
+            value: history.filter(h => h.label_name === "Offensive").length,
         },
         {
             name: "Hate",
-            value: history.filter(h => h.result === "Hate").length,
+            value: history.filter(h => h.label_name === "Hate").length,
         },
     ];
 
 
     async function loadDashboardData() {
-        const analytics = await fetch("http://127.0.0.1:5000/analytics")
-            .then(r => r.json());
+        try {
+            const [analyticsData, historyData] = await Promise.all([
+                api.analytics.dashboard(),
+                api.predictions.list({ page: 1, perPage: 10 }),
+            ]);
 
-        const history = await fetch("http://127.0.0.1:5000/history?page=1&limit=10")
-            .then(r => r.json());
-
-        setAnalytics(analytics);
-        setHistory(history.data);
+            setAnalytics(analyticsData);
+            setHistory(historyData.data);
+        } catch (err) {
+            // The dashboard is supplementary; a failure here must not blank
+            // out the analyzer.
+            console.error("Failed to load dashboard data:", err.message);
+        }
     }
 
 
@@ -62,7 +69,7 @@ export default function Home() {
         return text.split(/(\s+)/).map((chunk, i) => {
             const clean = chunk
                 .toLowerCase()
-                // ✅ SAME normalization as backend & modal
+                // same normalization as the backend and the modal
                 .replace(/[^\p{L}\p{M}]/gu, "");
 
             if (flaggedWords.includes(clean)) {
@@ -81,13 +88,12 @@ export default function Home() {
     useEffect(() => {
         loadDashboardData();
 
-        fetch("http://127.0.0.1:5000/flagged-terms")
-            .then(res => res.json())
-            .then(data => {
-                if (data.words) {
-                    setFlaggedWords(data.words);
-                }
-            });
+        api.flaggedTerms
+            .list()
+            .then(data => setFlaggedWords(data.words || []))
+            .catch(err =>
+                console.error("Failed to load flagged terms:", err.message)
+            );
     }, []);
 
 
@@ -95,22 +101,24 @@ export default function Home() {
         if (!text.trim()) return;
 
         setLoading(true);
+        setError(null);
 
-        const res = await fetch("http://127.0.0.1:5000/predict", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text }),
-        });
+        try {
+            const data = await api.predictions.create(text);
 
-        const data = await res.json();
+            setResult({
+                ...data,
+                expanded: true,
+            });
 
-        setResult({
-            ...data,
-            expanded: true,
-        });
-
-        setLoading(false);
-        loadDashboardData();
+            loadDashboardData();
+        } catch (err) {
+            // Surface the API's message instead of failing silently.
+            setError(err.message);
+            setResult(prev => ({ ...prev, expanded: false }));
+        } finally {
+            setLoading(false);
+        }
     }
 
 
@@ -146,7 +154,13 @@ export default function Home() {
                 >
                     {loading ? "Analyzing..." : "Analyze"}
                 </button>
-                </div>   {/* ✅ CLOSE input-container HERE */}
+                </div>   {/* end .input-container */}
+
+                {error && (
+                    <p className="analyze-error" role="alert">
+                        {error}
+                    </p>
+                )}
 
 
                 <div
@@ -335,9 +349,12 @@ export default function Home() {
                         <div className="insight-item">
                         <span className="insight-label">Avg Confidence</span>
                         <span className="insight-value">
+                            {/* confidence is a 0-1 float from the API; it used
+                                to arrive as the string "87.3%" and was parsed
+                                back into a number to average. */}
                             {Math.round(
-                            history.reduce((a, b) => a + parseFloat(b.score), 0) /
-                                history.length
+                            (history.reduce((a, b) => a + b.confidence, 0) /
+                                history.length) * 100
                             )}%
                         </span>
                         </div>
@@ -346,7 +363,7 @@ export default function Home() {
                         <span className="insight-label">Avg Latency</span>
                         <span className="insight-value">
                             {Math.round(
-                            history.reduce((a, b) => a + parseInt(b.latency_ms), 0) /
+                            history.reduce((a, b) => a + b.latency_ms, 0) /
                                 history.length
                             )} ms
                         </span>
@@ -370,18 +387,17 @@ export default function Home() {
                 <FeedbackModal
                     onClose={() => setShowFeedbackModal(false)}
                     onSubmit={async (label) => {
-                    await fetch("http://127.0.0.1:5000/feedback", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            text: text,
+                    try {
+                        await api.annotations.create({
+                            text,
+                            label,
                             language: result.language,
-                            correct_label: label,
-                        }),
-                    });
-
-                    setShowFeedbackModal(false);
-                    alert("✅ Feedback saved. Thank you!");
+                        });
+                        setShowFeedbackModal(false);
+                        alert("Feedback saved. Thank you!");
+                    } catch (err) {
+                        alert(`Could not save feedback: ${err.message}`);
+                    }
                     }}
                 />
             )}
@@ -436,7 +452,7 @@ export default function Home() {
                     <li>Simple REST API with secure API key access</li>
                 </ul>
 
-                {/* ✅ FLOATING BUTTON (correct position) */}
+                {/* floating CTA */}
                 <a
                     href="/api"
                     className="api-glow-btn api-glow-btn-floating"
@@ -464,13 +480,13 @@ export default function Home() {
                     className="survey-btn"
                     onClick={() => navigate("/surveypage")}
                 >
-                    📝 Take a Survey
+                    Take a Survey
                 </button>
             </div>
             </div>
 
 
-            
+
 
             {/* =========================
                 PROJECT BENEFITS / FEATURES
@@ -549,7 +565,7 @@ export default function Home() {
                 className="step-toggle"
                 onClick={() => setOpenStep(openStep === 1 ? null : 1)}
                 >
-                {openStep === 1 ? "▼" : "▶"}
+                {openStep === 1 ? "-" : "+"}
                 </button>
 
                 <strong>Enter Text</strong> — Paste or type any English, Hindi, or Hinglish text.
@@ -568,7 +584,7 @@ export default function Home() {
                 className="step-toggle"
                 onClick={() => setOpenStep(openStep === 2 ? null : 2)}
                 >
-                {openStep === 2 ? "▼" : "▶"}
+                {openStep === 2 ? "-" : "+"}
                 </button>
 
                 <strong>AI Analysis</strong> — The model processes the text.
@@ -587,7 +603,7 @@ export default function Home() {
                 className="step-toggle"
                 onClick={() => setOpenStep(openStep === 3 ? null : 3)}
                 >
-                {openStep === 3 ? "▼" : "▶"}
+                {openStep === 3 ? "-" : "+"}
                 </button>
 
                 <strong>Instant Result</strong> — Classification is returned.
@@ -606,7 +622,7 @@ export default function Home() {
                 className="step-toggle"
                 onClick={() => setOpenStep(openStep === 4 ? null : 4)}
                 >
-                {openStep === 4 ? "▼" : "▶"}
+                {openStep === 4 ? "-" : "+"}
                 </button>
 
                 <strong>Insights & History</strong> — Results are stored and visualized.
@@ -627,15 +643,13 @@ export default function Home() {
             <h3 className="sample-title">Try These Sample Texts</h3>
 
             <div className="sample-alert normal">
-                <span className="sample-icon">🟢</span>
                 <div className="sample-content">
                 <span className="sample-alert-title">Normal</span>
-                <code>आज का दिन बहुत अच्छा है 😊</code>
+                <code>आज का दिन बहुत अच्छा है</code>
                 </div>
             </div>
 
             <div className="sample-alert offensive">
-                <span className="sample-icon">🟡</span>
                 <div className="sample-content">
                 <span className="sample-alert-title">Offensive</span>
                 <code>You are so stupid and useless</code>
@@ -643,7 +657,6 @@ export default function Home() {
             </div>
 
             <div className="sample-alert hate">
-                <span className="sample-icon">🔴</span>
                 <div className="sample-content">
                 <span className="sample-alert-title">Hate Speech</span>
                 <code>You are so stupid and useless, you should get out here fucking terrorist </code>

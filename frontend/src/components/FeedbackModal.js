@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../styles/FeedbackModal.css";
+import * as api from "../api/client";
 
 export default function FeedbackModal({
   mode = "feedback",   // "feedback" | "improve"
@@ -25,7 +26,7 @@ export default function FeedbackModal({
       new Set(
         text
           .toLowerCase()
-          // ✅ keep English + Devanagari, remove punctuation/emojis
+          // keep English + Devanagari, remove punctuation/emoji
           .replace(/[^\p{L}\p{M}\s]/gu, "")
           .split(/\s+/)
           .filter(w => w.length > 1)
@@ -48,20 +49,22 @@ export default function FeedbackModal({
 
     setSubmitting(true);
 
-    await fetch("http://127.0.0.1:5000/feedback/flag-words", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    try {
+      await api.flaggedTerms.create({
         words: selectedWords,
         label: labelToText(label),
-      }),
-    });
+      });
 
-    setSubmitting(false);
-    setSelectedWords([]);
-    onClose();
-
-    alert("✅ Thanks! Your input will help improve accuracy.");
+      setSelectedWords([]);
+      onClose();
+      alert("Thanks! Your input will help improve accuracy.");
+    } catch (err) {
+      // Previously the fetch result was never checked, so a failed submission
+      // still showed the success message.
+      alert(`Could not submit: ${err.message}`);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (

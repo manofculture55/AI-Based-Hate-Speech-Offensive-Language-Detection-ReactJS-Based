@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/SurveyPage.css";
+import * as api from "../api/client";
 
 const SurveyPage = () => {
   const [text, setText] = useState("");
   const [selectedLabel, setSelectedLabel] = useState(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [questionCount, setQuestionCount] = useState(0);
   const MAX_QUESTIONS = 3;
 
-  const API_BASE = "http://127.0.0.1:5000";
   const navigate = useNavigate();
 
   // Fetch next survey text
   const fetchNext = async () => {
     if (questionCount >= MAX_QUESTIONS) {
       setText("");
-      setMessage("🎉 Thank you for completing the survey!");
+      setMessage("Thank you for completing the survey.");
       setLoading(false);
       return;
     }
@@ -29,15 +29,19 @@ const SurveyPage = () => {
     setMessage("");
 
     try {
-      const res = await axios.get(`${API_BASE}/survey/next`);
-      if (res.data.text) {
-        setText(res.data.text);
+      // Resolves to null once the corpus is exhausted (the API answers 404
+      // with code `survey_exhausted`, which the client maps to null).
+      const item = await api.survey.next();
+
+      if (item) {
+        setText(item.text);
       } else {
         setText("");
-        setMessage("🎉 No more texts available for survey");
+        setMessage("No more texts are available for labelling.");
       }
     } catch (err) {
-      setMessage("❌ Error loading survey text");
+      setText("");
+      setMessage(err.message);
     }
 
     setLoading(false);
@@ -54,25 +58,27 @@ const SurveyPage = () => {
       return;
     }
 
+    if (submitting) return;
+    setSubmitting(true);
+
     try {
-      await axios.post(`${API_BASE}/survey/submit`, {
-        text: text,
-        user_label: selectedLabel
-      });
+      await api.survey.vote({ text, label: selectedLabel });
 
       const nextCount = questionCount + 1;
       setQuestionCount(nextCount);
 
       if (nextCount >= MAX_QUESTIONS) {
         setText("");
-        setMessage("🎉 Thank you for completing the survey!");
+        setMessage("Thank you for completing the survey.");
         return;
       }
 
-      setMessage("✅ Response recorded. Loading next...");
+      setMessage("Response recorded. Loading next...");
       setTimeout(fetchNext, 900);
     } catch (err) {
-      setMessage("❌ Error submitting survey");
+      setMessage(err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -99,7 +105,7 @@ const SurveyPage = () => {
               style={{ marginTop: "18px" }}
               onClick={() => navigate("/")}
             >
-              ⬅ Back to Home
+              Back to Home
             </button>
           </>
         ) : (
@@ -141,8 +147,9 @@ const SurveyPage = () => {
             <button
               className="survey-submit-btn"
               onClick={submitVote}
+              disabled={submitting}
             >
-              Submit
+              {submitting ? "Submitting..." : "Submit"}
             </button>
 
 

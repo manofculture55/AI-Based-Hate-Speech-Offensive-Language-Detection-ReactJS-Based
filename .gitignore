@@ -47,6 +47,18 @@ frontend/pnpm-lock.yaml
 *.key
 *.secret
 
+# ...but the templates must be committed, or a fresh clone has no
+# idea which variables the app expects.
+!.env.example
+!frontend/.env.example
+
+# ===============================
+# Setup state
+# ===============================
+# Written by install.bat once setup succeeds; run.bat is the entry point
+# afterwards. Machine-local, so it must not be committed.
+.setup-complete
+
 # ===============================
 # IDE / OS / Tooling
 # ===============================

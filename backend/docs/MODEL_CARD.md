@@ -1,15 +1,15 @@
 # Model Card: AI-Based Hate Speech & Offensive Language Detection
 
-**Project:** KRIXION Internship Challenge  
+**Project:** Hate Speech & Offensive Language Detection  
 **Developer:** Prathmesh Ahire  
 **Year:** 2025–2026  
 **Model Version:** 1.0 (Final Submission)  
 
 **Input:** Multilingual Social Media Text (English, Hindi, Hinglish)  
 **Output:** Multi-class Classification  
-- 0 → Normal  
-- 1 → Offensive  
-- 2 → Hate Speech  
+- 0 -> Normal  
+- 1 -> Offensive  
+- 2 -> Hate Speech  
 
 **Execution Mode:** Fully Offline (CPU-only, No Internet, No External APIs)
 
@@ -212,6 +212,6 @@ These limitations are partially mitigated using human feedback.
 
 ## 13. Disclaimer
 
-This model is developed strictly for **educational and evaluation purposes** under the KRIXION Internship Challenge.
+This model is developed strictly for **educational and evaluation purposes** for this project.
 
 Predictions should not be treated as absolute truth and should be reviewed when used in sensitive environments.

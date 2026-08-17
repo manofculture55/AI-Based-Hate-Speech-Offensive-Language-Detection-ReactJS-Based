@@ -1,110 +1,155 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import * as api from "../api/client";
 
-const ADMIN_KEY = "KRIXION_ADMIN_2026";
-
+/**
+ * The admin key used to be a constant in this file, shipped inside the JS
+ * bundle for anyone to read, and the password was checked client-side
+ * (`if (password === "admin123")`) so the check could be skipped entirely.
+ * The password now goes to POST /api/v1/admin/sessions and the backend
+ * returns the key, which the api client keeps in sessionStorage.
+ */
 export default function Admin() {
-  const [authorized, setAuthorized] = useState(
-    sessionStorage.getItem("admin_auth") === "true"
-  );
+  const [authorized, setAuthorized] = useState(api.isAdminAuthenticated());
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState(null);
   const [status, setStatus] = useState("");
   const [trends, setTrends] = useState(null);
+  const [trendsNotice, setTrendsNotice] = useState(null);
   const [flaggedTerms, setFlaggedTerms] = useState([]);
   const [surveyOverview, setSurveyOverview] = useState(null);
+  const [training, setTraining] = useState(null);
 
-  function login() {
-    if (password === "admin123") {
-      sessionStorage.setItem("admin_auth", "true");
+  const pollRef = useRef(null);
 
-      // ✅ ADD THIS LINE (CRITICAL FIX)
-      window.dispatchEvent(new Event("admin-auth-change"));
-
+  async function login() {
+    setLoginError(null);
+    try {
+      await api.admin.login(password);
       setAuthorized(true);
       setPassword("");
-    } else {
-      alert("Wrong password");
+    } catch (err) {
+      setLoginError(err.message);
     }
   }
-
 
   useEffect(() => {
     if (authorized) {
       loadTrends();
       loadFlaggedTerms();
-      loadSurveyOverview(); 
+      loadSurveyOverview();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authorized]);
+
+  // Stop polling if the admin navigates away mid-training.
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
 
   async function uploadCSV(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     setStatus("Uploading...");
 
-    const res = await fetch("http://127.0.0.1:5000/admin/upload", {
-      method: "POST",
-      headers: {
-        "X-ADMIN-KEY": ADMIN_KEY,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-    setStatus(JSON.stringify(data, null, 2));
+    try {
+      const data = await api.admin.uploadDataset(file);
+      setStatus(JSON.stringify(data, null, 2));
+    } catch (err) {
+      setStatus(
+        `Upload failed: ${err.message}` +
+          (err.details ? `\n${JSON.stringify(err.details, null, 2)}` : "")
+      );
+    } finally {
+      // Allow re-uploading the same file.
+      e.target.value = "";
+    }
   }
 
+  /**
+   * Training runs as a background job on the server. This kicks it off and
+   * polls until it settles, instead of holding one request open for minutes.
+   */
   async function retrain() {
-    setStatus("Training started...");
+    setStatus("Requesting training...");
 
-    const res = await fetch("http://127.0.0.1:5000/admin/retrain", {
-      method: "POST",
-      headers: {
-        "X-ADMIN-KEY": ADMIN_KEY,
-      },
-    });
+    try {
+      const job = await api.admin.startTraining();
+      setTraining(job);
+      setStatus(`Training job #${job.id} is ${job.status}.`);
 
-    const data = await res.json();
-    setStatus(JSON.stringify(data, null, 2));
+      if (pollRef.current) clearInterval(pollRef.current);
+
+      pollRef.current = setInterval(async () => {
+        try {
+          const latest = await api.admin.getTrainingJob(job.id);
+          setTraining(latest);
+
+          const finished = ["succeeded", "failed", "interrupted"].includes(
+            latest.status
+          );
+
+          if (finished) {
+            clearInterval(pollRef.current);
+            pollRef.current = null;
+            setStatus(
+              `Training job #${latest.id} ${latest.status}.` +
+                (latest.detail ? `\n${latest.detail}` : "")
+            );
+            loadTrends();
+          } else {
+            setStatus(`Training job #${latest.id} is ${latest.status}...`);
+          }
+        } catch (err) {
+          clearInterval(pollRef.current);
+          pollRef.current = null;
+          setStatus(`Lost track of the training job: ${err.message}`);
+        }
+      }, 3000);
+    } catch (err) {
+      setStatus(`Could not start training: ${err.message}`);
+    }
   }
 
   async function loadTrends() {
-    const res = await fetch("http://127.0.0.1:5000/admin/trends", {
-      headers: {
-        "X-ADMIN-KEY": ADMIN_KEY,
-      },
-    });
+    try {
+      const data = await api.admin.trends();
 
-    const data = await res.json();
-    if (data.trends) {
-      setTrends(data.trends);
+      if (data.sufficient_data) {
+        setTrends(data.trends);
+        setTrendsNotice(null);
+      } else {
+        // Used to be an HTTP 400 that the page silently swallowed.
+        setTrends(null);
+        setTrendsNotice(
+          `Not enough predictions yet for trend analysis ` +
+            `(${data.window_size}/${data.minimum_required}).`
+        );
+      }
+    } catch (err) {
+      setTrendsNotice(`Could not load trends: ${err.message}`);
     }
   }
 
   async function loadFlaggedTerms() {
-    const res = await fetch("http://127.0.0.1:5000/admin/flagged-terms", {
-      headers: {
-        "X-ADMIN-KEY": ADMIN_KEY,
-      },
-    });
-
-    const data = await res.json();
-    if (data.data) {
-      setFlaggedTerms(data.data);
+    try {
+      // min_frequency 1 so admins also see words flagged only once.
+      const data = await api.flaggedTerms.list({ minFrequency: 1 });
+      setFlaggedTerms(data.data || []);
+    } catch (err) {
+      console.error("Failed to load flagged terms:", err.message);
     }
   }
 
   async function loadSurveyOverview() {
-    const res = await fetch("http://127.0.0.1:5000/admin/survey-overview", {
-      headers: {
-        "X-ADMIN-KEY": ADMIN_KEY,
-      },
-    });
-
-    const data = await res.json();
-    setSurveyOverview(data);
+    try {
+      const data = await api.survey.stats();
+      setSurveyOverview(data.participation);
+    } catch (err) {
+      console.error("Failed to load survey stats:", err.message);
+    }
   }
 
   if (!authorized) {
@@ -118,21 +163,29 @@ export default function Admin() {
             placeholder="Enter password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && login()}
           />
 
           <button onClick={login}>Login</button>
+
+          {loginError && (
+            <p className="admin-login-error" role="alert">
+              {loginError}
+            </p>
+          )}
         </div>
       </div>
     );
   }
 
-
+  const trainingInFlight =
+    training && ["queued", "running"].includes(training.status);
 
   return (
     <div className="admin-panel">
 
       <div className="admin-hero">
-        <p className="admin-badge">KRIXION • ADMIN ACCESS</p>
+        <p className="admin-badge">ADMIN ACCESS</p>
 
         <h1 className="admin-title">Control Center</h1>
 
@@ -144,7 +197,6 @@ export default function Admin() {
       <div className="admin-actions">
         {/* Upload Dataset */}
         <div className="admin-card">
-          <div className="admin-card-icon">📂</div>
 
           <h3 className="admin-card-title">Upload Dataset</h3>
           <p className="admin-card-desc">
@@ -159,22 +211,28 @@ export default function Admin() {
 
         {/* Retrain Model */}
         <div className="admin-card admin-card-danger">
-          <div className="admin-card-icon">🧠</div>
 
           <h3 className="admin-card-title">Retrain Model</h3>
           <p className="admin-card-desc">
-            Rebuild all models using the latest datasets. This may take time.
+            Rebuild all models using the latest datasets. Runs in the background
+            — you can leave this page.
           </p>
 
-          <button className="admin-card-btn danger" onClick={retrain}>
-            Start Training
+          <button
+            className="admin-card-btn danger"
+            onClick={retrain}
+            disabled={trainingInFlight}
+          >
+            {trainingInFlight ? "Training in progress..." : "Start Training"}
           </button>
         </div>
       </div>
 
       <pre className="admin-status">{status}</pre>
 
-      {/* ✅ TRENDS SECTION BELOW */}
+      {/* Trend analysis */}
+      {trendsNotice && <p className="admin-empty">{trendsNotice}</p>}
+
       {trends && (
         <div className="admin-trends">
 
@@ -196,10 +254,11 @@ export default function Admin() {
                     <span className="trend-dot" />
                     <p className="trend-title">{label}</p>
 
+                    {/* Direction is carried by the sign and the up/down
+                        colour class rather than a glyph. */}
                     <p className={`trend-percent ${up ? "up" : down ? "down" : ""}`}>
-                      {up && "▲"}
-                      {down && "▼"}
-                      {!up && !down && "●"} {Math.abs(data.change_percent)}%
+                      {up ? "+" : down ? "-" : ""}
+                      {Math.abs(data.change_percent)}%
                     </p>
                   </div>
 
@@ -221,7 +280,7 @@ export default function Admin() {
                     </p>
 
                     {label === "Hate" && up && (
-                      <p className="trend-alert">⚠ Spike detected</p>
+                      <p className="trend-alert">Spike detected</p>
                     )}
                   </div>
                 </div>
@@ -261,13 +320,13 @@ export default function Admin() {
 
             <div>
               <span>Avg Votes / Text</span>
-              <b>{surveyOverview.avg_votes.toFixed(2)}</b>
+              <b>{Number(surveyOverview.avg_votes).toFixed(2)}</b>
             </div>
           </div>
         </div>
       )}
 
- 
+
 
       {flaggedTerms.length > 0 ? (
         <div className="admin-flagged-terms">
@@ -286,13 +345,15 @@ export default function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {flaggedTerms.map((item, idx) => (
-                  <tr key={idx}>
+                {flaggedTerms.map((item) => (
+                  <tr key={item.id}>
                     <td>{item.word}</td>
                     <td>{item.context}</td>
                     <td>{item.frequency}</td>
                     <td>
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {item.created_at
+                        ? new Date(item.created_at).toLocaleDateString()
+                        : "—"}
                     </td>
                   </tr>
                 ))}
@@ -307,4 +368,3 @@ export default function Admin() {
   );
 
 }
-

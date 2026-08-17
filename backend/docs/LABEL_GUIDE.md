@@ -1,13 +1,13 @@
 # Label Guide & Annotation Schema
 
-This project follows the strict labeling schema defined in **KRIXION Project Brief Section 4** [Source 21].
+This project follows the strict labeling schema defined in the project label specification.
 
 ## 1. Class Definitions
 | Label ID | Class Name | UI Color | Description |
 |:---:|:---:|:---:|:---|
-| **0** | **Normal** | 🟩 Green | Non-toxic, standard conversation. No aggression detected. |
-| **1** | **Offensive** | 🟨 Amber | Rude, vulgar, or insulting language (but NOT hate speech). |
-| **2** | **Hate Speech** | 🟥 Red | Targeted attacks based on religion, caste, gender, or ethnicity. |
+| **0** | **Normal** | Green | Non-toxic, standard conversation. No aggression detected. |
+| **1** | **Offensive** | Amber | Rude, vulgar, or insulting language (but NOT hate speech). |
+| **2** | **Hate Speech** | Red | Targeted attacks based on religion, caste, gender, or ethnicity. |
 
 ## 2. Database Storage
 In the SQLite database (`app.db`), predictions are stored in the `predicted_label` column as integers `(0, 1, 2)`.

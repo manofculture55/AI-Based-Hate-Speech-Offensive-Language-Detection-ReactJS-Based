@@ -206,8 +206,8 @@
 ========================= */
 
 .chart-card.compact {
-  width: 400px;     /* ⬅️ remove forced width */
-  margin: 0;       /* ⬅️ remove auto margins (KEY FIX) */
+  width: 400px;     /* remove forced width */
+  margin: 0;       /* remove auto margins (KEY FIX) */
   padding: 18px 12px;
   box-shadow: none;
 }

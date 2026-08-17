@@ -2,7 +2,7 @@ import re
 
 def detect_language_strict(text, origin_dataset):
     """
-    Strict Language Logic based on KRIXION Source.
+    Strict language-detection rules defined by the project specification.
     
     Args:
         text (str): The cleaned text sample.
